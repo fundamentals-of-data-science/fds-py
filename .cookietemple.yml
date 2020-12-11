@@ -1,0 +1,20 @@
+cookietemple_version: '1.2.2 # <<COOKIETEMPLE_NO_BUMP>>'
+domain: cli
+language: python
+project_slug: fundamentals_of_data_science
+project_slug_no_hyphen: fundamentals_of_data_science
+template_version: '1.1.0 # <<COOKIETEMPLE_NO_BUMP>>'
+template_handle: cli-python
+github_username: andrewcstewart
+creator_github_username: andrewcstewart
+is_github_repo: false
+is_repo_private: false
+is_github_orga: false
+full_name: Andrew Stewart
+email: andrew.c.stewart@gmail.com
+project_name: fundamentals_of_data_science
+project_short_description: 'Companion Python package for Fundamentals of Data Science. '
+version: 2.0.0
+license: MIT
+command_line_interface: Click
+testing_library: pytest
