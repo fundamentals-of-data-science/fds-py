@@ -419,4 +419,3 @@ def evaluate_coefficient_predictions(predictions, result):
 def adjusted_r_squared(result):
     adjustment = (result["n"] - 1)/(result["n"] - len(result["coefficients"]) - 1 - 1)
     return 1 - (1 - result["r_squared"]) * adjustment
-    
