@@ -175,6 +175,18 @@
 
 
 <div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.summarize.html#fundamentals_of_data_science.models.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Summarize</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        formula ([type]): [description]</span>
+<span class="sd">        X ([type]): [description]</span>
+<span class="sd">        y ([type]): [description]</span>
+<span class="sd">        model ([type]): [description]</span>
+<span class="sd">        style (str, optional): [description]. Defaults to &#39;linear&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">result</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
     <span class="n">result</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -200,7 +212,20 @@
 
 
 <div class="viewcode-block" id="linear_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.linear_regression.html#fundamentals_of_data_science.models.linear_regression">[docs]</a><span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
-    <span class="sd">&quot;&quot;&quot;Linear regression&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Linear regression</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        formula ([type]): [description]</span>
+<span class="sd">        data ([type], optional): [description]. Defaults to None.</span>
+<span class="sd">        style (str, optional): [description]. Defaults to &quot;linear&quot;.</span>
+<span class="sd">        params (dict, optional): [description]. Defaults to {}.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
 
@@ -241,11 +266,30 @@
 
 
 <div class="viewcode-block" id="logistic"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.logistic.html#fundamentals_of_data_science.models.logistic">[docs]</a><span class="k">def</span> <span class="nf">logistic</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;logistic function</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z ([type]): [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">z</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="logistic_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.logistic_regression.html#fundamentals_of_data_science.models.logistic_regression">[docs]</a><span class="k">def</span> <span class="nf">logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Logistic regression&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Logistic regression</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        formula ([type]): [description]</span>
+<span class="sd">        data ([type], optional): [description]. Defaults to None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
 
@@ -345,6 +389,19 @@
     <span class="k">return</span> <span class="n">bootstrap_results</span></div>
 
 <div class="viewcode-block" id="bootstrap_logistic_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.bootstrap_logistic_regression.html#fundamentals_of_data_science.models.bootstrap_logistic_regression">[docs]</a><span class="k">def</span> <span class="nf">bootstrap_logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Bootstrap logistic regression</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        formula ([type]): [description]</span>
+<span class="sd">        data ([type], optional): [description]. Defaults to None.</span>
+<span class="sd">        samples (int, optional): [description]. Defaults to 100.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
     
