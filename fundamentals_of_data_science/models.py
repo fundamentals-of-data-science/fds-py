@@ -15,6 +15,18 @@ ALGORITHMS = {
 
 
 def summarize(formula, X, y, model, style='linear'):
+    """Summarize
+
+    Args:
+        formula ([type]): [description]
+        X ([type]): [description]
+        y ([type]): [description]
+        model ([type]): [description]
+        style (str, optional): [description]. Defaults to 'linear'.
+
+    Returns:
+        [type]: [description]
+    """    
     result = {}
     result["formula"] = formula
     result["n"] = len(y)
@@ -40,7 +52,20 @@ def summarize(formula, X, y, model, style='linear'):
 
 
 def linear_regression(formula, data=None, style="linear", params={}):
-    """Linear regression"""
+    """Linear regression
+
+    Args:
+        formula ([type]): [description]
+        data ([type], optional): [description]. Defaults to None.
+        style (str, optional): [description]. Defaults to "linear".
+        params (dict, optional): [description]. Defaults to {}.
+
+    Raises:
+        ValueError: [description]
+
+    Returns:
+        [type]: [description]
+    """
     if data is None:
         raise ValueError( "The parameter 'data' must be assigned a non-nil reference to a Pandas DataFrame")
 
@@ -81,11 +106,30 @@ def linear_regression(formula, data=None, style="linear", params={}):
 
 
 def logistic(z):
+    """logistic function
+
+    Args:
+        z ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """    
     return 1.0 / (1.0 + np.exp( -z))
 
 
 def logistic_regression( formula, data=None):
-    """Logistic regression"""
+    """Logistic regression
+
+    Args:
+        formula ([type]): [description]
+        data ([type], optional): [description]. Defaults to None.
+
+    Raises:
+        ValueError: [description]
+
+    Returns:
+        [type]: [description]
+    """
     if data is None:
         raise ValueError( "The parameter 'data' must be assigned a non-nil reference to a Pandas DataFrame")
 
@@ -185,6 +229,19 @@ def bootstrap_linear_regression( formula, data=None, samples=100, style="linear"
     return bootstrap_results
 
 def bootstrap_logistic_regression( formula, data=None, samples=100):
+    """Bootstrap logistic regression
+
+    Args:
+        formula ([type]): [description]
+        data ([type], optional): [description]. Defaults to None.
+        samples (int, optional): [description]. Defaults to 100.
+
+    Raises:
+        ValueError: [description]
+
+    Returns:
+        [type]: [description]
+    """    
     if data is None:
         raise ValueError( "The parameter 'data' must be assigned a non-nil reference to a Pandas DataFrame")
     
