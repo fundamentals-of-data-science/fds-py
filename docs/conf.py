@@ -159,3 +159,5 @@ texinfo_documents = [
 html_css_files = [
     'custom_cookietemple.css',
 ]
+
+extensions = ['sphinx.ext.autodoc']
