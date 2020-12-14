@@ -1,0 +1,7 @@
+ResultsView
+===========
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autoclass:: ResultsView
+   :show-inheritance:

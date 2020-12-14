@@ -1,0 +1,6 @@
+bootstrap_logistic_regression
+=============================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: bootstrap_logistic_regression

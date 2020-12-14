@@ -1,0 +1,6 @@
+fmt
+===
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: fmt

@@ -1,0 +1,631 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fundamentals_of_data_science.models &mdash; fundamentals_of_data_science 2.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom_cookietemple.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> fundamentals_of_data_science
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">fundamentals_of_data_science</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code_of_conduct.html">Contributor Covenant Code of Conduct</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fundamentals_of_data_science</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fundamentals_of_data_science.models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fundamentals_of_data_science.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">patsy</span>
+<span class="kn">import</span> <span class="nn">sklearn.linear_model</span> <span class="k">as</span> <span class="nn">linear</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># from IPython.display import HTML, display_html</span>
+
+<span class="n">ALGORITHMS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="n">linear</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">,</span>
+    <span class="s2">&quot;ridge&quot;</span><span class="p">:</span> <span class="n">linear</span><span class="o">.</span><span class="n">Ridge</span><span class="p">,</span>
+    <span class="s2">&quot;lasso&quot;</span><span class="p">:</span> <span class="n">linear</span><span class="o">.</span><span class="n">Lasso</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="summarize"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.summarize.html#fundamentals_of_data_science.models.summarize">[docs]</a><span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="c1"># I think this is a bug in Scikit Learn </span>
+    <span class="c1"># because lasso should work with multiple targets.</span>
+    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;lasso&quot;</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;r_squared&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;residuals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y_hat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_hat</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">y</span>
+    <span class="n">sum_squared_error</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">e</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;residuals&quot;</span><span class="p">])</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">])</span>
+
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">sum_squared_error</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="linear_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.linear_regression.html#fundamentals_of_data_science.models.linear_regression">[docs]</a><span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Linear regression&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
+
+    <span class="n">params</span><span class="p">[</span><span class="s2">&quot;fit_intercept&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrices</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s2">&quot;matrix&quot;</span><span class="p">)</span>
+    <span class="n">algorithm</span> <span class="o">=</span> <span class="n">ALGORITHMS</span><span class="p">[</span><span class="n">style</span><span class="p">]</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">algorithm</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">summarize</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+
+    <span class="c1"># result = {}</span>
+    <span class="c1"># result[&quot;formula&quot;] = formula</span>
+    <span class="c1"># result[&quot;n&quot;] = data.shape[ 0]</span>
+
+    <span class="c1"># result[&quot;model&quot;] = model</span>
+
+    <span class="c1"># if style == &quot;lasso&quot;:</span>
+    <span class="c1">#     result[&quot;coefficients&quot;] = model.coef_</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#     result[&quot;coefficients&quot;] =  model.coef_[0]</span>
+
+    <span class="c1"># result[&quot;r_squared&quot;] = model.score( X, y)</span>
+    
+    <span class="c1"># y_hat = model.predict( X)</span>
+    <span class="c1"># result[&quot;residuals&quot;] = y - y_hat</span>
+    <span class="c1"># result[&quot;y_hat&quot;] = y_hat</span>
+    <span class="c1"># result[&quot;y&quot;]  = y</span>
+    <span class="c1"># sum_squared_error = sum([e**2 for e in result[ &quot;residuals&quot;]])[0]</span>
+
+    <span class="c1"># n = len(result[&quot;residuals&quot;])</span>
+    <span class="c1"># k = len(result[&quot;coefficients&quot;])</span>
+    
+    <span class="c1"># result[&quot;sigma&quot;] = np.sqrt( sum_squared_error / (n - k))</span>
+    
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="logistic"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.logistic.html#fundamentals_of_data_science.models.logistic">[docs]</a><span class="k">def</span> <span class="nf">logistic</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">z</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="logistic_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.logistic_regression.html#fundamentals_of_data_science.models.logistic_regression">[docs]</a><span class="k">def</span> <span class="nf">logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Logistic regression&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+    <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrices</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s2">&quot;matrix&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span> <span class="n">y</span><span class="p">)</span> <span class="c1"># not sure why this is needed for LogisticRegression but not LinearRegression</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">linear</span><span class="o">.</span><span class="n">LogisticRegression</span><span class="p">(</span> <span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span> <span class="n">X</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y_hat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_hat</span> 
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="c1"># efron&#39;s pseudo R^2</span>
+    <span class="n">y_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;probabilities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pr</span>
+    <span class="n">efrons_numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">pr</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> 
+    <span class="n">efrons_denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y</span><span class="o">-</span><span class="n">y_bar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;r_squared&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">efrons_numerator</span><span class="o">/</span><span class="n">efrons_denominator</span><span class="p">)</span>
+
+    <span class="c1"># error rate</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;residuals&quot;</span><span class="p">]))</span><span class="o">/</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">])</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="bootstrap_linear_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.bootstrap_linear_regression.html#fundamentals_of_data_science.models.bootstrap_linear_regression">[docs]</a><span class="k">def</span> <span class="nf">bootstrap_linear_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Bootstrap linear regression</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        formula ([type]): [description]</span>
+<span class="sd">        data ([type], optional): [description]. Defaults to None.</span>
+<span class="sd">        samples (int, optional): [description]. Defaults to 100.</span>
+<span class="sd">        style (str, optional): [description]. Defaults to &quot;linear&quot;.</span>
+<span class="sd">        params (dict, optional): [description]. Defaults to {}.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: [description]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
+    
+    <span class="n">bootstrap_results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">formula</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s2">&quot;+&quot;</span><span class="p">)]</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;intercept&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">variables</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;variables&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
+    
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="n">sampling_indices</span> <span class="o">=</span> <span class="p">[</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)]]</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="n">sampling_indices</span><span class="p">]</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">])</span>
+        <span class="n">sigmas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">])</span>
+        <span class="n">rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">])</span>
+    
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span> <span class="n">sigmas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span> <span class="n">rs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;r_squared&quot;</span><span class="p">)</span>
+
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmas</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_r^2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rs</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span><span class="s2">&quot;y_hat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;y_hat&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">bootstrap_results</span></div>
+
+<div class="viewcode-block" id="bootstrap_logistic_regression"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.bootstrap_logistic_regression.html#fundamentals_of_data_science.models.bootstrap_logistic_regression">[docs]</a><span class="k">def</span> <span class="nf">bootstrap_logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s2">&quot;The parameter &#39;data&#39; must be assigned a non-nil reference to a Pandas DataFrame&quot;</span><span class="p">)</span>
+    
+    <span class="n">bootstrap_results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">formula</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s2">&quot;+&quot;</span><span class="p">)]</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;intercept&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">variables</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;variables&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
+    
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="n">sampling_indices</span> <span class="o">=</span> <span class="p">[</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)]]</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="n">sampling_indices</span><span class="p">]</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="n">logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
+        <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">])</span>
+        <span class="n">sigmas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">])</span>
+        <span class="n">rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">results</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">])</span>
+    
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span> <span class="n">sigmas</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span> <span class="n">rs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;r_squared&quot;</span><span class="p">)</span>
+
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigmas</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;resampled_r^2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rs</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">logistic_regression</span><span class="p">(</span> <span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;residuals&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;coefficients&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span> <span class="s2">&quot;r_squared&quot;</span><span class="p">]</span>
+    <span class="n">bootstrap_results</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">bootstrap_results</span></div>
+
+<div class="viewcode-block" id="fmt"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.fmt.html#fundamentals_of_data_science.models.fmt">[docs]</a><span class="k">def</span> <span class="nf">fmt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;{0:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="results_table"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.results_table.html#fundamentals_of_data_science.models.results_table">[docs]</a><span class="k">def</span> <span class="nf">results_table</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">bootstrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_logistic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span> 
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fit</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]]</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span>
+    <span class="n">coefficients</span> <span class="o">=</span> <span class="p">[]</span> 
+
+    <span class="k">if</span> <span class="n">bootstrap</span><span class="p">:</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">fit</span><span class="p">[</span> <span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">])</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">],</span> <span class="n">bounds</span><span class="p">)):</span>
+            <span class="n">coefficient</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">r</span><span class="s2">&quot;$\beta_</span><span class="si">{0}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">sd</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">is_logistic</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">coefficient</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="n">logistic</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">sd</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">coefficient</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">sd</span><span class="p">))</span>
+            <span class="n">coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coefficient</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">])):</span>
+            <span class="n">coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">r</span><span class="s2">&quot;$\beta_</span><span class="si">{0}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sd</span><span class="p">)])</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coefficients</span>
+
+    <span class="n">error</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\sigma$&quot;</span>
+    <span class="n">r_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$R^2$&quot;</span>
+    <span class="k">if</span> <span class="n">is_logistic</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Error ($\%$)&quot;</span>
+        <span class="n">r_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Efron&#39;s $R^2$&quot;</span>
+    <span class="k">if</span> <span class="n">bootstrap</span><span class="p">:</span>
+        <span class="n">sigma_bounds</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">mstats</span><span class="o">.</span><span class="n">mquantiles</span><span class="p">(</span> <span class="n">fit</span><span class="p">[</span> <span class="s2">&quot;resampled_sigma&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">])</span>
+        <span class="n">r_bounds</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">mstats</span><span class="o">.</span><span class="n">mquantiles</span><span class="p">(</span> <span class="n">fit</span><span class="p">[</span> <span class="s2">&quot;resampled_r^2&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">])</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">error</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">fit</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">sigma_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">sigma_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sd</span><span class="p">)],</span> 
+            <span class="p">[</span><span class="n">r_label</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">fit</span><span class="p">[</span><span class="s2">&quot;r_squared&quot;</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">r_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sd</span><span class="p">),</span> <span class="n">fmt</span><span class="p">(</span><span class="n">r_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sd</span><span class="p">)]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">error</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">fit</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="n">sd</span><span class="p">)],</span> 
+            <span class="p">[</span><span class="n">r_label</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">fit</span><span class="p">[</span><span class="s2">&quot;r_squared&quot;</span><span class="p">],</span> <span class="n">sd</span><span class="p">)]]</span>
+
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="ResultsView"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.ResultsView.html#fundamentals_of_data_science.models.ResultsView">[docs]</a><span class="k">class</span> <span class="nc">ResultsView</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_logistic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span> <span class="o">=</span> <span class="n">bootstrap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span> <span class="o">=</span> <span class="n">is_logistic</span>
+
+    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">span</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="s2">&quot;3&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="s2">&quot;5&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;table&gt;&lt;tr&gt;&lt;th colspan=&quot;</span> <span class="o">+</span> <span class="n">span</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;&gt;Linear Regression Results&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;table&gt;&lt;tr&gt;&lt;th colspan=&quot;</span> <span class="o">+</span> <span class="n">span</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;&gt;Logistic Regression Results&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;&lt;th colspan=&quot;</span> <span class="o">+</span> <span class="n">span</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;&gt;Coefficients&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+        <span class="n">coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;th&gt;$\theta$&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;95% BCI&lt;/th&gt;&lt;th&gt;P(y=1)&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;</span><span class="si">{2}</span><span class="s2">&lt;/td&gt;&lt;td&gt;(</span><span class="si">{3}</span><span class="s2">, </span><span class="si">{4}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;</span><span class="si">{5}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;th&gt;$\theta$&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;</span><span class="si">{2}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;th&gt;$\theta$&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;95% BCI&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;</span><span class="si">{2}</span><span class="s2">&lt;/td&gt;&lt;td&gt;(</span><span class="si">{3}</span><span class="s2">, </span><span class="si">{4}</span><span class="s2">)&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;th&gt;$\theta$&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;</span><span class="si">{2}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">header</span>
+        <span class="k">for</span> <span class="n">coefficient</span> <span class="ow">in</span> <span class="n">coefficients</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">coefficient</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;th colspan=&quot;</span> <span class="o">+</span> <span class="n">span</span> <span class="o">+</span> <span class="s2">&quot;&gt;Metrics&lt;/th&gt;&lt;/tr&gt;&quot;</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2">&lt;/td&gt;&lt;td&gt;</span><span class="si">{1}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">{0}</span><span class="s2">&lt;/td&gt;&lt;td&gt;</span><span class="si">{1}</span><span class="s2">&lt;/td&gt;&lt;td&gt;(</span><span class="si">{2}</span><span class="s2">, </span><span class="si">{3}</span><span class="s2">)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">metric</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;&lt;/table&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_repr_latex_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">span</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="mi">3</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\begin</span><span class="si">{table}</span><span class="s2">[!htbp] \begin</span><span class="si">{tabular}</span><span class="s2">{&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;l&quot;</span> <span class="o">*</span> <span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;} \hline \multicolumn{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}</span><span class="si">{c}</span><span class="s2">{\textbf{Linear Regression}} </span><span class="se">\\</span><span class="s2"> \hline \hline &quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\begin</span><span class="si">{table}</span><span class="s2">[!htbp] \begin</span><span class="si">{tabular}</span><span class="s2">{&quot;</span><span class="o">+</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;l&quot;</span> <span class="o">*</span> <span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;} \hline \multicolumn{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}</span><span class="si">{c}</span><span class="s2">{\textbf{Logistic Regression}} </span><span class="se">\\</span><span class="s2"> \hline \hline &quot;</span>
+
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\multicolumn{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}</span><span class="si">{l}</span><span class="s2">{\textbf</span><span class="si">{Coefficients}</span><span class="s2">}        </span><span class="se">\\</span><span class="s2"> \hline &quot;</span>
+        <span class="n">coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logistic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\theta$       &amp;          &amp; 95\% BCI     &amp; P(y=1)</span><span class="se">\\</span><span class="s2">&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)      &amp; </span><span class="si">{2}</span><span class="s2">   &amp; (</span><span class="si">{3}</span><span class="s2">, </span><span class="si">{4}</span><span class="s2">)   &amp; </span><span class="si">{5}</span><span class="s2">  </span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\theta$                  &amp;                    </span><span class="se">\\</span><span class="s2">&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)                &amp; </span><span class="si">{2}</span><span class="s2">               </span><span class="se">\\</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\theta$       &amp;          &amp; 95\% BCI           </span><span class="se">\\</span><span class="s2">&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)      &amp; </span><span class="si">{2}</span><span class="s2">   &amp; (</span><span class="si">{3}</span><span class="s2">, </span><span class="si">{4}</span><span class="s2">)          </span><span class="se">\\</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\theta$                  &amp;                    </span><span class="se">\\</span><span class="s2">&quot;</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)                &amp; </span><span class="si">{2}</span><span class="s2">               </span><span class="se">\\</span><span class="s2">&quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">header</span>
+        <span class="k">for</span> <span class="n">coefficient</span> <span class="ow">in</span> <span class="n">coefficients</span><span class="p">:</span>
+            <span class="n">coefficient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coefficient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;\_&#39;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">coefficient</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\hline \multicolumn{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">span</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}</span><span class="si">{l}</span><span class="s2">{\textbf</span><span class="si">{Metrics}</span><span class="s2">}             </span><span class="se">\\</span><span class="s2"> \hline &quot;</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">                &amp; </span><span class="si">{1}</span><span class="s2">               </span><span class="se">\\</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">      &amp; </span><span class="si">{1}</span><span class="s2">   &amp; (</span><span class="si">{2}</span><span class="s2">, </span><span class="si">{3}</span><span class="s2">)          </span><span class="se">\\</span><span class="s2">&quot;</span>
+
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\hline&quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\end</span><span class="si">{tabular}</span><span class="s2">\end</span><span class="si">{table}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="print_csv"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.print_csv.html#fundamentals_of_data_science.models.print_csv">[docs]</a><span class="k">def</span> <span class="nf">print_csv</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Linear Regression&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Metrics&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="simple_describe_lr"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.simple_describe_lr.html#fundamentals_of_data_science.models.simple_describe_lr">[docs]</a><span class="k">def</span> <span class="nf">simple_describe_lr</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">results_table</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ResultsView</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="simple_describe_lgr"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.simple_describe_lgr.html#fundamentals_of_data_science.models.simple_describe_lgr">[docs]</a><span class="k">def</span> <span class="nf">simple_describe_lgr</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">results_table</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ResultsView</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="describe_bootstrap_lr"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.describe_bootstrap_lr.html#fundamentals_of_data_science.models.describe_bootstrap_lr">[docs]</a><span class="k">def</span> <span class="nf">describe_bootstrap_lr</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">results_table</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ResultsView</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="describe_bootstrap_lgr"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.describe_bootstrap_lgr.html#fundamentals_of_data_science.models.describe_bootstrap_lgr">[docs]</a><span class="k">def</span> <span class="nf">describe_bootstrap_lgr</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">results_table</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ResultsView</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="strength"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.strength.html#fundamentals_of_data_science.models.strength">[docs]</a><span class="k">def</span> <span class="nf">strength</span><span class="p">(</span><span class="n">pr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pr</span> <span class="o">&lt;=</span> <span class="mf">0.33</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;weak&quot;</span>
+    <span class="k">if</span> <span class="mf">0.33</span> <span class="o">&lt;</span> <span class="n">pr</span> <span class="o">&lt;=</span> <span class="mf">0.66</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;mixed&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;strong&quot;</span></div>
+
+<span class="c1"># {&quot;var1&quot;: &quot;+&quot;, &quot;var2&quot;: &quot;-&quot;}</span>
+<div class="viewcode-block" id="evaluate_coefficient_predictions"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.evaluate_coefficient_predictions.html#fundamentals_of_data_science.models.evaluate_coefficient_predictions">[docs]</a><span class="k">def</span> <span class="nf">evaluate_coefficient_predictions</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="n">coefficients</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">for</span> <span class="n">coefficient</span> <span class="ow">in</span> <span class="n">coefficients</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">coefficient</span> <span class="o">==</span> <span class="s1">&#39;intercept&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">predictions</span><span class="p">[</span><span class="n">coefficient</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+            <span class="n">pr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">][</span><span class="n">coefficient</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> P(&gt;0)=</span><span class="si">{1:.3f}</span><span class="s2"> (</span><span class="si">{2}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coefficient</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">strength</span><span class="p">(</span><span class="n">pr</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;resampled_coefficients&quot;</span><span class="p">][</span><span class="n">coefficient</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> P(&lt;0)=</span><span class="si">{1:.3f}</span><span class="s2"> (</span><span class="si">{2}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coefficient</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">strength</span><span class="p">(</span><span class="n">pr</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="adjusted_r_squared"><a class="viewcode-back" href="../../api/fundamentals_of_data_science.models.adjusted_r_squared.html#fundamentals_of_data_science.models.adjusted_r_squared">[docs]</a><span class="k">def</span> <span class="nf">adjusted_r_squared</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="n">adjustment</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;coefficients&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;r_squared&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">adjustment</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Andrew Stewart
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

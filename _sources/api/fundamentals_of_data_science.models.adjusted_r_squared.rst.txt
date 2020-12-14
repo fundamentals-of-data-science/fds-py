@@ -1,0 +1,6 @@
+adjusted_r_squared
+==================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: adjusted_r_squared

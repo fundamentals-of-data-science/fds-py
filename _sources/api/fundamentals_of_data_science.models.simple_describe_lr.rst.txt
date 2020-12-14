@@ -1,0 +1,6 @@
+simple_describe_lr
+==================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: simple_describe_lr

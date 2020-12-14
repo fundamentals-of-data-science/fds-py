@@ -1,0 +1,6 @@
+evaluate_coefficient_predictions
+================================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: evaluate_coefficient_predictions

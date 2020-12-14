@@ -1,0 +1,6 @@
+summarize
+=========
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: summarize

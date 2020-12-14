@@ -1,0 +1,6 @@
+logistic_regression
+===================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: logistic_regression

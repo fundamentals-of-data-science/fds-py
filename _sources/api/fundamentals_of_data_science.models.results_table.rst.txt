@@ -1,0 +1,6 @@
+results_table
+=============
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: results_table

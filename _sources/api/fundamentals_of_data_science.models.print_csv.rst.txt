@@ -1,0 +1,6 @@
+print_csv
+=========
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: print_csv

@@ -1,0 +1,6 @@
+describe_bootstrap_lgr
+======================
+
+.. currentmodule:: fundamentals_of_data_science.models
+
+.. autofunction:: describe_bootstrap_lgr
