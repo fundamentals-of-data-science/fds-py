@@ -160,4 +160,4 @@ html_css_files = [
     'custom_cookietemple.css',
 ]
 
-# extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc']
