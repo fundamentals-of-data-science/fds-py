@@ -2,5 +2,5 @@
 Modules
 =======
 
-.. automodule:: fundamentals_of_data_science.models
+.. automodule:: models
     :members:
